@@ -24,6 +24,7 @@
 #### 👤 User Management / Kullanıcı Yönetimi
 <img width="2160" height="1440" alt="user management" src="https://github.com/user-attachments/assets/23e9fc87-5f28-478d-a956-60f2c301ed5c" />
 
+
 ## 🇹🇷 Türkçe
 
 Stockify Enterprise, kurumsal yazılım mimarilerine (Enterprise Architecture) uygun olarak katmanlı yapıda sıfırdan geliştirilmiş, web tabanlı bir Envanter ve Stok Yönetim Çekirdeğidir (Core System). 
