@@ -1,0 +1,152 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                template="../panel-template.xhtml">
+    <ui:define name="anaIcerik">
+        <h1 class="mb-4">Ürün Yönetimi</h1>
+
+        <h:panelGroup layout="block"
+                      styleClass="alert alert-success d-flex align-items-center gap-2 shadow-sm"
+                      rendered="#{facesContext.messageList.size() gt 0 and productBean.lastActionSuccess}">
+            <i class="bi bi-check-circle-fill fs-5"/>
+            <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="alert alert-danger d-flex align-items-center gap-2 shadow-sm"
+                      rendered="#{facesContext.messageList.size() gt 0 and !productBean.lastActionSuccess or facesContext.validationFailed}">
+            <i class="bi bi-exclamation-triangle-fill fs-5"/>
+            <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
+        </h:panelGroup>
+
+        <h:panelGroup rendered="#{authBean.admin}">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-dark text-white">
+                    <h5>#{productBean.product.id == null ? 'Yeni Ürün Ekle' : 'Ürün Güncelle'}</h5>
+                </div>
+                <div class="card-body">
+                    <h:form id="urunForm">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Ürün Adı *</label>
+                                <h:inputText id="urunAdi" label="Ürün Adı" styleClass="form-control" value="#{productBean.product.name}" required="true"
+                                             requiredMessage="Ürün Adı alanı boş bırakılamaz!"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Stok Kodu *</label>
+                                <h:inputText id="stokKodu" label="Stok Kodu" styleClass="form-control" value="#{productBean.product.stockCode}" required="true"
+                                             requiredMessage="Stok Kodu alanı boş bırakılamaz!"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Kategori *</label>
+                                <h:selectOneMenu id="kategori" label="Kategori" styleClass="form-select" value="#{productBean.product.category}" required="true"
+                                                 requiredMessage="Lütfen bir kategori seçiniz!">
+                                    <f:selectItem itemLabel="-- Seçin --" itemValue="#{null}" noSelectionOption="true"/>
+                                    <f:selectItems value="#{productBean.categories}" var="k" itemValue="#{k}" itemLabel="#{k.displayName}"/>
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Birim Fiyat *</label>
+                                <h:inputText id="birimFiyat" label="Birim Fiyat" styleClass="form-control" value="#{productBean.product.unitPrice}" required="true"
+                                             requiredMessage="Birim Fiyat alanı boş bırakılamaz!"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Stok Miktarı *</label>
+                                <h:inputText id="stokMiktari" label="Stok Miktarı" styleClass="form-control" value="#{productBean.product.stockQuantity}" required="true"
+                                             requiredMessage="Stok Miktarı alanı boş bırakılamaz!"/>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">Kritik Seviye *</label>
+                                <h:inputText id="kritikSeviye" label="Kritik Seviye" styleClass="form-control" value="#{productBean.product.criticalStockLevel}" required="true"
+                                             requiredMessage="Kritik Seviye alanı boş bırakılamaz!"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Açıklama</label>
+                                <h:inputText id="aciklama" styleClass="form-control" value="#{productBean.product.description}"/>
+                            </div>
+                            <div class="col-md-12 mt-2">
+                                <h:commandButton styleClass="btn btn-primary" rendered="#{productBean.product.id == null}" value="Ekle" action="#{productBean.saveProduct()}"/>
+                                <h:commandButton styleClass="btn btn-success ms-2" rendered="#{productBean.product.id != null}" value="Güncelle" action="#{productBean.updateProduct()}"/>
+                                <h:commandButton styleClass="btn btn-secondary ms-2" rendered="#{productBean.product.id != null}" value="İptal" action="#{productBean.clearForm()}" immediate="true"/>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </h:panelGroup>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Ürün Listesi</h5>
+                <h:form id="excelForm">
+                    <h:commandButton styleClass="btn btn-success btn-sm"
+                                     value="⬇ Excel Raporu İndir"
+                                     action="#{productBean.exportToExcel()}"
+                                     title="Mevcut listeyi Excel formatında indir"/>
+                </h:form>
+            </div>
+            <div class="card-body border-bottom pb-3">
+                <h:form id="filtreForm">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label mb-1">Ürün Ara (Ad veya Stok Kodu)</label>
+                            <h:inputText id="aramaMetni" styleClass="form-control" value="#{productBean.searchText}" placeholder="Ürün adı veya stok kodu..."/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label mb-1">Kategori</label>
+                            <h:selectOneMenu id="seciliKategori" styleClass="form-select" value="#{productBean.selectedCategory}">
+                                <f:selectItem itemLabel="Tümü" itemValue="#{null}"/>
+                                <f:selectItems value="#{productBean.categories}" var="k" itemValue="#{k}" itemLabel="#{k.displayName}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-4 d-flex gap-2">
+                            <h:commandButton styleClass="btn btn-primary w-100" value="Ara / Filtrele" action="#{productBean.searchAndFilter()}"/>
+                            <h:commandButton styleClass="btn btn-outline-secondary w-100" value="Temizle" action="#{productBean.clearFilter()}" immediate="true"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Stok Kodu</th>
+                            <th>Ürün Adı</th>
+                            <th>Kategori</th>
+                            <th>Fiyat</th>
+                            <th>Stok</th>
+                            <th>Durum</th>
+                            <th>İşlem</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{productBean.products}" var="u">
+                            <tr>
+                                <td>#{u.stockCode}</td>
+                                <td>#{u.name}</td>
+                                <td>#{u.category.displayName}</td>
+                                <td>#{u.unitPrice} ₺</td>
+                                <td>#{u.stockQuantity}</td>
+                                <td>
+                                    <h:outputText styleClass="badge bg-danger" value="Düşük Stok" rendered="#{u.lowStock}"/>
+                                    <h:outputText styleClass="badge bg-success" value="Normal" rendered="#{!u.lowStock}"/>
+                                </td>
+                                <td>
+                                    <h:panelGroup rendered="#{authBean.admin}">
+                                        <h:form id="tabloIslemForm">
+                                            <h:commandButton styleClass="btn btn-warning btn-sm" value="Düzenle" action="#{productBean.prepareForEdit(u)}"/>
+                                            <h:commandButton styleClass="btn btn-danger btn-sm ms-1" value="Sil" action="#{productBean.deleteProduct(u)}" onclick="return confirm('Silmek istediğinize emin misiniz?')"/>
+                                        </h:form>
+                                    </h:panelGroup>
+                                    <h:outputText value="-" rendered="#{authBean.staff}"/>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

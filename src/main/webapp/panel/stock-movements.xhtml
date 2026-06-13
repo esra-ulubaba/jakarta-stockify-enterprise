@@ -1,0 +1,143 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                template="../panel-template.xhtml">
+    <ui:define name="anaIcerik">
+        <h1 class="mb-4">Stok Hareketleri</h1>
+
+        <h:panelGroup layout="block"
+                      styleClass="alert alert-success d-flex align-items-center gap-2 shadow-sm"
+                      rendered="#{facesContext.messageList.size() gt 0 and stockMovementBean.lastActionSuccess}">
+            <i class="bi bi-check-circle-fill fs-5"/>
+            <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
+        </h:panelGroup>
+
+        <h:panelGroup layout="block"
+                      styleClass="alert alert-danger d-flex align-items-center gap-2 shadow-sm"
+                      rendered="#{facesContext.messageList.size() gt 0 and !stockMovementBean.lastActionSuccess or facesContext.validationFailed}">
+            <i class="bi bi-exclamation-triangle-fill fs-5"/>
+            <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
+        </h:panelGroup>
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5>Yeni Hareket Kaydet</h5>
+            </div>
+            <div class="card-body">
+                <h:form id="hareketForm">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Ürün *</label>
+                            <h:selectOneMenu id="urun" label="Ürün" styleClass="form-select" value="#{stockMovementBean.selectedProductId}" required="true"
+                                             requiredMessage="Lütfen bir ürün seçiniz!">
+                                <f:selectItem itemLabel="-- Ürün Seçin --" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{stockMovementBean.allProducts}" var="u" itemValue="#{u.id}" itemLabel="#{u.stockCode} - #{u.name} (Stok: #{u.stockQuantity})"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Hareket Tipi *</label>
+                            <h:selectOneMenu id="hareketTipi" label="Hareket Tipi" styleClass="form-select" value="#{stockMovementBean.movement.movementType}" required="true"
+                                             requiredMessage="Lütfen bir hareket tipi seçiniz!">
+                                <f:selectItem itemLabel="-- Seçin --" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{stockMovementBean.movementTypes}" var="ht" itemValue="#{ht}" itemLabel="#{ht.displayName}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">Miktar *</label>
+                            <h:inputText id="miktar" label="Miktar" styleClass="form-control" value="#{stockMovementBean.movement.quantity}" required="true"
+                                         requiredMessage="Miktar alanı boş bırakılamaz!"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Açıklama</label>
+                            <h:inputText id="aciklama" styleClass="form-control" value="#{stockMovementBean.movement.description}"/>
+                        </div>
+                        <div class="col-12">
+                            <h:commandButton styleClass="btn btn-primary" value="Kaydet" action="#{stockMovementBean.saveMovement()}"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm mb-3">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Filtrele</h5>
+            </div>
+            <div class="card-body">
+                <h:form id="filtreForm">
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label">Hareket Tipi</label>
+                            <h:selectOneMenu id="filtreHareketTipi" styleClass="form-select" value="#{stockMovementBean.filterMovementType}">
+                                <f:selectItem itemLabel="Tümü" itemValue="#{null}"/>
+                                <f:selectItems value="#{stockMovementBean.movementTypes}" var="ht" itemValue="#{ht}" itemLabel="#{ht.displayName}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Başlangıç Tarihi</label>
+                            <h:inputText id="filtreBaslangic" styleClass="form-control" value="#{stockMovementBean.filterStartDateStr}" type="date"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Bitiş Tarihi</label>
+                            <h:inputText id="filtreBitis" styleClass="form-control" value="#{stockMovementBean.filterEndDateStr}" type="date"/>
+                        </div>
+                        <div class="col-md-3 d-flex gap-2">
+                            <h:commandButton styleClass="btn btn-primary w-100" value="Uygula" action="#{stockMovementBean.applyFilter()}"/>
+                            <h:commandButton styleClass="btn btn-outline-secondary w-100" value="Temizle" action="#{stockMovementBean.clearFilter()}" immediate="true"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Hareket Listesi</h5>
+                <div class="d-flex gap-2 align-items-center">
+                    <h:outputText styleClass="badge bg-warning text-dark me-2" value="Filtre Aktif" rendered="#{stockMovementBean.filterApplied}"/>
+
+                    <h:form id="excelForm">
+                        <h:commandButton styleClass="btn btn-success btn-sm"
+                                         value="⬇ Excel Raporu İndir"
+                                         action="#{stockMovementBean.exportToExcel()}"
+                                         title="Mevcut listeyi Excel formatında indir"/>
+                    </h:form>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Ürün</th>
+                            <th>Stok Kodu</th>
+                            <th>Hareket</th>
+                            <th>Miktar</th>
+                            <th>Açıklama</th>
+                            <th>Kullanıcı</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{stockMovementBean.recentMovements}" var="h">
+                            <tr>
+                                <td>#{h.date}</td>
+                                <td>#{h.product.name}</td>
+                                <td>#{h.product.stockCode}</td>
+                                <td>
+                                    <h:outputText styleClass="badge bg-success" value="#{h.movementType.displayName}" rendered="#{h.movementType.name() == 'GIRIS'}"/>
+                                    <h:outputText styleClass="badge bg-danger" value="#{h.movementType.displayName}" rendered="#{h.movementType.name() == 'CIKIS'}"/>
+                                    <h:outputText styleClass="badge bg-warning text-dark" value="#{h.movementType.displayName}" rendered="#{h.movementType.name() == 'DUZELTME'}"/>
+                                </td>
+                                <td>#{h.quantity}</td>
+                                <td>#{h.description}</td>
+                                <td>#{h.user != null ? h.user.firstName : '-'}</td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,111 @@
+<ui:composition template="../panel-template.xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core">
+    <ui:define name="anaIcerik">
+        <h1 class="mb-4">Kullanıcı Yönetimi</h1>
+
+        <h:messages id="sayfaMesajlari"
+                    styleClass="#{facesContext.validationFailed ? 'alert alert-danger shadow-sm' : 'alert alert-success shadow-sm'}"
+                    style="list-style-type: none; padding-left: 10px; font-weight: bold;" />
+
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-dark text-white">
+                <h5>#{userBean.user.id == null ? 'Yeni Kullanıcı' : 'Kullanıcı Güncelle'}</h5>
+            </div>
+            <div class="card-body">
+                <h:form id="kullaniciForm">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Ad *</label>
+                            <h:inputText id="ad" label="Ad" styleClass="form-control" value="#{userBean.user.firstName}" required="true" requiredMessage="Ad alanı boş bırakılamaz!"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Soyad *</label>
+                            <h:inputText id="soyad" label="Soyad" styleClass="form-control" value="#{userBean.user.lastName}" required="true" requiredMessage="Soyad alanı boş bırakılamaz!" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">E-posta *</label>
+                            <h:inputText id="email" label="E-posta" styleClass="form-control" value="#{userBean.user.email}" required="true" requiredMessage="E-posta alanı boş bırakılamaz!"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Şifre *</label>
+                            <h:inputSecret id="sifre" label="Şifre" styleClass="form-control"
+                                           value="#{userBean.user.password}"
+                                           rendered="#{userBean.user.id == null}"
+                                           required="#{userBean.user.id == null}"
+                                           requiredMessage="Şifre alanı boş bırakılamaz!"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Rol *</label>
+                            <h:selectOneMenu id="rol" label="Rol" styleClass="form-select"
+                                             value="#{userBean.user.role}"
+                                             required="true"
+                                             requiredMessage="Lütfen bir rol seçiniz!">
+                                <f:selectItem itemLabel="-- Seçin --" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{userBean.roles}" var="r"
+                                               itemValue="#{r}" itemLabel="#{r.name}"/>
+                            </h:selectOneMenu>
+                        </div>
+                        <div class="col-12">
+                            <h:commandButton styleClass="btn btn-primary"
+                                             rendered="#{userBean.user.id == null}"
+                                             value="Kaydet" action="#{userBean.saveUser()}"/>
+                            <h:commandButton styleClass="btn btn-success ms-2"
+                                             rendered="#{userBean.user.id != null}"
+                                             value="Güncelle" action="#{userBean.updateUser()}"/>
+                            <h:commandButton styleClass="btn btn-secondary ms-2"
+                                             rendered="#{userBean.user.id != null}"
+                                             value="İptal" action="#{userBean.clearForm()}"
+                                             immediate="true"/>
+                        </div>
+                    </div>
+                </h:form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Kullanıcı Listesi</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Ad</th>
+                            <th>Soyad</th>
+                            <th>E-posta</th>
+                            <th>Rol</th>
+                            <th>İşlem</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{userBean.users}" var="k">
+                            <tr>
+                                <td>#{k.firstName}</td>
+                                <td>#{k.lastName}</td>
+                                <td>#{k.email}</td>
+                                <td>
+                                    <span class="badge bg-dark">#{k.role.name}</span>
+                                </td>
+                                <td>
+                                    <h:form id="listeIslemForm">
+                                        <h:commandButton styleClass="btn btn-warning btn-sm"
+                                                         value="Düzenle"
+                                                         action="#{userBean.prepareForEdit(k)}"/>
+                                        <h:commandButton styleClass="btn btn-danger btn-sm ms-1"
+                                                         value="Sil"
+                                                         action="#{userBean.deleteUser(k)}"
+                                                         onclick="return confirm('Silmek istediğinize emin misiniz?')"/>
+                                    </h:form>
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

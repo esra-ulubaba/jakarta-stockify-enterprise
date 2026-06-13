@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:h="jakarta.faces.html">
+<f:view>
+    <h:head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Stockify Enterprise</title>
+        <h:outputStylesheet library="css" name="bootstrap.min.css"/>
+        <h:outputScript library="js" name="bootstrap.bundle.min.js"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">📦 Stockify Enterprise</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"/>
+                </button>
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <h:link styleClass="nav-link" outcome="/panel/index" value="Dashboard"/>
+                        </li>
+                        <li class="nav-item">
+                            <h:link styleClass="nav-link" outcome="/panel/products" value="Ürünler"/>
+                        </li>
+                        <li class="nav-item">
+                            <h:link styleClass="nav-link" outcome="/panel/stock-movements" value="Stok Hareketleri"/>
+                        </li>
+                        <ui:fragment rendered="#{authBean.admin}">
+                            <li class="nav-item">
+                                <h:link styleClass="nav-link" outcome="/panel/users" value="Kullanıcılar" />
+                            </li>
+                            <li class="nav-item">
+                                <h:link styleClass="nav-link" outcome="/panel/system-log" value="Sistem Geçmişi" />
+                            </li>
+                        </ui:fragment>
+                    </ul>
+                    <ul class="navbar-nav align-items-center gap-2">
+                        <li class="nav-item">
+                            <span class="navbar-text text-white-50 small">
+                                #{authBean.activeUsername}
+                                <span class="badge bg-secondary ms-1">#{authBean.roleLabel}</span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <h:form>
+                                <h:commandButton styleClass="btn btn-outline-light btn-sm"
+                                                 value="Çıkış" action="#{loginBean.logout()}"/>
+                            </h:form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid px-4">
+            <ui:insert name="anaIcerik"/>
+        </div>
+        <div class="mt-5 py-3 text-center text-muted">
+            <small>Envanter Takip Sistemi</small>
+        </div>
+    </h:body>
+</f:view>
+</html>

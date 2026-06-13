@@ -1,0 +1,52 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets" xmlns:h="jakarta.faces.html" xmlns:f="jakarta.faces.core" template="../panel-template.xhtml">
+    <ui:define name="anaIcerik">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="mb-0">Sistem Geçmişi</h1>
+            <h:form>
+                <h:commandButton styleClass="btn btn-outline-secondary btn-sm"
+                                 value="Yenile"
+                                 action="#{systemLogBean.refresh()}"/>
+            </h:form>
+        </div>
+        <div class="alert alert-warning d-flex align-items-center mb-4" role="alert">
+            <span class="me-2">🔒</span>
+            <span>Bu sayfa yalnızca yöneticiler tarafından görüntülenebilir. Son 200 sistem olayı listelenmektedir.</span>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">📋 Sistem Olay Kayıtları</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped mb-0">
+                        <thead class="table-dark">
+                        <tr>
+                            <th style="width:160px">Tarih / Saat</th>
+                            <th>Olay Açıklaması</th>
+                            <th style="width:180px">Kullanıcı</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ui:repeat value="#{systemLogBean.logs}" var="l">
+                            <tr>
+                                <td class="text-nowrap small text-muted">
+                                    #{l.timestamp}
+                                </td>
+                                <td>#{l.message}</td>
+                                <td class="small">
+                                    #{l.user != null ? l.user.firstName.concat(' ').concat(l.user.lastName) : '-'}
+                                </td>
+                            </tr>
+                        </ui:repeat>
+                        <ui:fragment rendered="#{empty systemLogBean.logs}">
+                            <tr>
+                                <td colspan="3" class="text-center text-muted py-4">Henüz kayıt bulunmamaktadır.</td>
+                            </tr>
+                        </ui:fragment>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

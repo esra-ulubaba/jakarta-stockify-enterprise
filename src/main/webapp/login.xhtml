@@ -1,0 +1,96 @@
+<ui:composition xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                template="/template.xhtml">
+    <ui:define name="anaIcerik">
+        <div class="container mt-5">
+            <div class="row justify-content-center">
+                <div class="col-md-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-dark text-white text-center">
+                            <h4>Stockify Enterprise</h4>
+                        </div>
+                        <div class="card-body p-4">
+                            <h:messages id="mesajlar" showSummary="true" showDetail="false"
+                                        styleClass="alert #{facesContext.maximumSeverity.ordinal == 0 ? 'alert-success' : 'alert-danger'} mb-3"
+                                        style="list-style: none; padding: 10px;" globalOnly="true"/>
+
+                            <h:form id="sekmeForm">
+                                <ul class="nav nav-tabs mb-4">
+                                    <li class="nav-item">
+                                        <h:commandLink value="Giriş Yap" action="#{loginBean.setRegisterMode(false)}"
+                                                       styleClass="nav-link #{!loginBean.registerMode ? 'active' : ''}">
+                                            <f:ajax render=":formPaneli mesajlar sekmeForm" />
+                                        </h:commandLink>
+                                    </li>
+                                    <li class="nav-item">
+                                        <h:commandLink value="Kayıt Ol" action="#{loginBean.setRegisterMode(true)}"
+                                                       styleClass="nav-link #{loginBean.registerMode ? 'active' : ''}">
+                                            <f:ajax render=":formPaneli mesajlar sekmeForm" />
+                                        </h:commandLink>
+                                    </li>
+                                </ul>
+                            </h:form>
+
+                            <h:panelGroup id="formPaneli">
+                                <h:panelGroup rendered="#{!loginBean.registerMode}">
+                                    <h:form id="loginF" autocomplete="off">
+                                        <div class="mb-3">
+                                            <label class="form-label">E-posta</label>
+                                            <h:inputText styleClass="form-control" value="#{loginBean.user.email}" required="true"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Şifre</label>
+                                            <div class="input-group">
+                                                <h:inputSecret styleClass="form-control" value="#{loginBean.user.password}" rendered="#{!loginBean.showLoginPassword}" redisplay="true" required="true"/>
+                                                <h:inputText styleClass="form-control" value="#{loginBean.user.password}" rendered="#{loginBean.showLoginPassword}" required="true"/>
+
+                                                <h:commandButton value="#{loginBean.showLoginPassword ? 'Gizle' : 'Göster'}"
+                                                                 action="#{loginBean.toggleLoginPasswordVisibility()}"
+                                                                 styleClass="btn btn-outline-secondary">
+                                                    <f:ajax render="loginF" execute="loginF" />
+                                                </h:commandButton>
+                                            </div>
+                                        </div>
+                                        <div class="d-grid mt-4">
+                                            <h:commandButton styleClass="btn btn-dark" value="Giriş Yap" action="#{loginBean.login()}"/>
+                                        </div>
+                                    </h:form>
+                                </h:panelGroup>
+
+                                <h:panelGroup rendered="#{loginBean.registerMode}">
+                                    <h:form id="kayitF" autocomplete="off">
+                                        <div class="mb-3">
+                                            <label class="form-label">Ad *</label>
+                                            <h:inputText styleClass="form-control" value="#{loginBean.registerUser.firstName}" required="true"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Soyad *</label>
+                                            <h:inputText styleClass="form-control" value="#{loginBean.registerUser.lastName}" required="true"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">E-posta *</label>
+                                            <h:inputText styleClass="form-control" value="#{loginBean.registerUser.email}" required="true"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Şifre *</label>
+                                            <h:inputSecret styleClass="form-control" value="#{loginBean.registerUser.password}" redisplay="true" required="true"/>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Şifre Tekrar *</label>
+                                            <h:inputSecret styleClass="form-control" value="#{loginBean.confirmPassword}" redisplay="true" required="true"/>
+                                        </div>
+                                        <small class="text-muted mb-3 d-block">Rolünüz otomatik olarak 'Personel' atanacaktır. Gereken rol değişimi için yöneticiniz ile iletişime geçiniz.</small>
+                                        <div class="d-grid mt-2">
+                                            <h:commandButton styleClass="btn btn-dark" value="Kayıt Ol" action="#{loginBean.register()}"/>
+                                        </div>
+                                    </h:form>
+                                </h:panelGroup>
+                            </h:panelGroup>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,78 @@
+<ui:composition template="../panel-template.xhtml"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:h="jakarta.faces.html">
+    <ui:define name="anaIcerik">
+        <h1 class="mb-4">Dashboard</h1>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card text-bg-primary shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Toplam Ürün</h5>
+                        <p class="display-6">#{dashboardBean.totalProductCount}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-bg-danger shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Düşük Stok Uyarısı</h5>
+                        <p class="display-6">#{dashboardBean.lowStockCount}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="mb-3">⚠️ Kritik Stok Uyarıları</h4>
+        <div class="table-responsive mb-5">
+            <table class="table table-bordered table-hover">
+                <thead class="table-danger">
+                <tr>
+                    <th>Stok Kodu</th>
+                    <th>Ürün Adı</th>
+                    <th>Kategori</th>
+                    <th>Mevcut Stok</th>
+                    <th>Kritik Seviye</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ui:repeat value="#{dashboardBean.lowStockProducts}" var="u">
+                    <tr>
+                        <td>#{u.stockCode}</td>
+                        <td>#{u.name}</td>
+                        <td>#{u.category.displayName}</td>
+                        <td><span class="badge bg-danger">#{u.stockQuantity}</span></td>
+                        <td>#{u.criticalStockLevel}</td>
+                    </tr>
+                </ui:repeat>
+                </tbody>
+            </table>
+        </div>
+
+        <h4 class="mb-3">🔄 Son Stok Hareketleri</h4>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
+                <tr>
+                    <th>Tarih</th>
+                    <th>Ürün</th>
+                    <th>Hareket Tipi</th>
+                    <th>Miktar</th>
+                    <th>Açıklama</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ui:repeat value="#{dashboardBean.recentMovements}" var="h">
+                    <tr>
+                        <td>#{h.date}</td>
+                        <td>#{h.product.name}</td>
+                        <td>#{h.movementType.displayName}</td>
+                        <td>#{h.quantity}</td>
+                        <td>#{h.description}</td>
+                    </tr>
+                </ui:repeat>
+                </tbody>
+            </table>
+        </div>
+    </ui:define>
+</ui:composition>
