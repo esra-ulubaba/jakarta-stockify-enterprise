@@ -7,6 +7,23 @@
 
 ---
 
+## 🖥️ Ekran Görüntüleri / Screenshots
+
+#### 📊 System Dashboard / Genel Özet Paneli
+<img width="2160" height="1440" alt="dashboard" src="https://github.com/user-attachments/assets/427cb7a1-fc1b-4f90-9eee-032d20816e7d" />
+
+#### 📦 Product Management & Excel Reporting / Ürün Yönetimi ve Excel Raporlama
+<img width="2160" height="1440" alt="product management" src="https://github.com/user-attachments/assets/696bc359-d510-4229-96e7-ea56df3679fd" />
+
+#### 🔄 Stock Movements Tracking / Stok Giriş-Çıkış Hareketleri
+<img width="2160" height="1440" alt="stock movement" src="https://github.com/user-attachments/assets/1cd8e056-9061-4b32-987b-f6501dd8ccab" />
+
+#### 📜 Enterprise Audit Trail (System Logs) / Kurumsal Sistem Geçmişi ve İlk Başlatma Logu
+<img width="2160" height="1440" alt="system history" src="https://github.com/user-attachments/assets/64d583b3-caf8-4f1c-b916-1b9b9a76bc50" />
+
+#### 👤 User Management / Kullanıcı Yönetimi
+<img width="2160" height="1440" alt="user management" src="https://github.com/user-attachments/assets/23e9fc87-5f28-478d-a956-60f2c301ed5c" />
+
 ## 🇹🇷 Türkçe
 
 Stockify Enterprise, kurumsal yazılım mimarilerine (Enterprise Architecture) uygun olarak katmanlı yapıda sıfırdan geliştirilmiş, web tabanlı bir Envanter ve Stok Yönetim Çekirdeğidir (Core System). 
@@ -18,7 +35,7 @@ Bu sistem; endüstriyel işletmelerin stok giriş-çıkış süreçlerini optimi
 * **Backend (Arka Plan):** Java 25 LTS, Jakarta EE (EJB 4.0, JPA 3.0 / EclipseLink)
 * **Database (Veritabanı):** PostgreSQL
 * **Frontend (Arayüz):** Jakarta Server Faces (JSF), Bootstrap 5, Bootstrap Icons
-* **Uygulama Sunucusu:** Payara Server / GlassFish 7
+* **Uygulama Sunucusu:** GlassFish 7
 
 ### 🚀 Mimari Tasarım ve Geliştirme Süreci
 
