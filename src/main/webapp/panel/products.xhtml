@@ -7,14 +7,14 @@
 
         <h:panelGroup layout="block"
                       styleClass="alert alert-success d-flex align-items-center gap-2 shadow-sm"
-                      rendered="#{facesContext.messageList.size() gt 0 and productBean.lastActionSuccess}">
+                      rendered="#{facesContext.messageList.size() gt 0 and productBean.lastActionSuccess and !facesContext.validationFailed}">
             <i class="bi bi-check-circle-fill fs-5"/>
             <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
         </h:panelGroup>
 
         <h:panelGroup layout="block"
                       styleClass="alert alert-danger d-flex align-items-center gap-2 shadow-sm"
-                      rendered="#{facesContext.messageList.size() gt 0 and !productBean.lastActionSuccess or facesContext.validationFailed}">
+                      rendered="#{facesContext.messageList.size() gt 0 and (!productBean.lastActionSuccess or facesContext.validationFailed)}">
             <i class="bi bi-exclamation-triangle-fill fs-5"/>
             <h:messages showSummary="true" showDetail="false" layout="list" styleClass="mb-0 list-unstyled font-weight-bold"/>
         </h:panelGroup>
@@ -45,21 +45,35 @@
                                     <f:selectItems value="#{productBean.categories}" var="k" itemValue="#{k}" itemLabel="#{k.displayName}"/>
                                 </h:selectOneMenu>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Birim Fiyat *</label>
                                 <h:inputText id="birimFiyat" label="Birim Fiyat" styleClass="form-control" value="#{productBean.product.unitPrice}" required="true"
-                                             requiredMessage="Birim Fiyat alanı boş bırakılamaz!"/>
+                                             requiredMessage="Birim Fiyat alanı boş bırakılamaz!"
+                                             validatorMessage="Birim fiyat sıfırdan büyük bir sayı olmalıdır! (Örn: en az 0.01)"
+                                             onkeyup="this.value= this.value.replace(',','.');">
+                                    <f:validateDoubleRange minimum="0.01" />
+                                </h:inputText>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Stok Miktarı *</label>
                                 <h:inputText id="stokMiktari" label="Stok Miktarı" styleClass="form-control" value="#{productBean.product.stockQuantity}" required="true"
-                                             requiredMessage="Stok Miktarı alanı boş bırakılamaz!"/>
+                                             requiredMessage="Stok Miktarı alanı boş bırakılamaz!"
+                                             validatorMessage="Stok miktarı negatif olamaz! (Örn: en az 0)">
+                                    <f:validateLongRange minimum="0" />
+                                </h:inputText>
                             </div>
+
                             <div class="col-md-2">
                                 <label class="form-label">Kritik Seviye *</label>
                                 <h:inputText id="kritikSeviye" label="Kritik Seviye" styleClass="form-control" value="#{productBean.product.criticalStockLevel}" required="true"
-                                             requiredMessage="Kritik Seviye alanı boş bırakılamaz!"/>
+                                             requiredMessage="Kritik Seviye alanı boş bırakılamaz!"
+                                             validatorMessage="Kritik seviye negatif olamaz! (Örn: en az 0)">
+                                    <f:validateLongRange minimum="0" />
+                                </h:inputText>
                             </div>
+
                             <div class="col-md-6">
                                 <label class="form-label">Açıklama</label>
                                 <h:inputText id="aciklama" styleClass="form-control" value="#{productBean.product.description}"/>
